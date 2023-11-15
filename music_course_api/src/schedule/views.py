@@ -13,15 +13,21 @@ from rest_framework.views import APIView
 # Create your views here.
 class ScheduleView(APIView):
     def get(self,request, *args, **kwargs):
-        serializer_context = {
+        try:
+            serializer_context = {
                 'request':request
-        }
+            }
         
-        lecturers = Schedule.objects.all()
+            lecturers = Schedule.objects.all()
 
-        serializer = ScheduleSerializer(lecturers,many=True,context=serializer_context)
+            serializer = ScheduleSerializer(lecturers,many=True,context=serializer_context)
 
-        return Response({'data':serializer.data},status=status.HTTP_200_OK)
+            return Response({'data':serializer.data},status=status.HTTP_200_OK)
+        
+        except Exception:
+            return Response({"errors": {
+                "message":"something went wrong"
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     def post(self, request, *args, **kwargs):
         try:
@@ -48,24 +54,29 @@ class ScheduleView(APIView):
         except Exception:
              return Response({"errors": {
                 "message":"something went wrong"
-            }}, status=status.HTTP_404_NOT_FOUND)
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
 
 
 
 class ScheduleDetailView(APIView):
     def get(self,request,schedule_id, *args, **kwargs):
-        schedule = self.get_object(schedule_id)
-
+        try:
+            schedule = self.get_object(schedule_id)
         
-        if not schedule:
-            return Response(
-                {"res": "Invalid Lecturer ID!"}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        serializer = ScheduleSerializer(schedule)
-       
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            if not schedule:
+                return Response(
+                    {"res": "Invalid Lecturer ID!"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            serializer = ScheduleSerializer(schedule)
+        
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Exception:
+             return Response({"errors": {
+                "message":"something went wrong"
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
        
 
     def get_object(self,schedule_id):
@@ -78,26 +89,28 @@ class ScheduleDetailView(APIView):
             return
 
     def put(self, request, schedule_id, *args, **kwargs):
-        '''
-        Updates the todo item with given lecture_id if exists
-        '''
-
-        lecturer = self.get_object(schedule_id)
-        if not schedule_id:
-            return Response(
-                {"res": "Invalid Lecturer ID!"}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        try:
+            lecturer = self.get_object(schedule_id)
+            if not schedule_id:
+                return Response(
+                    {"res": "Invalid Lecturer ID!"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            data = {
+                    'lecturer': request.data.get('lecturer'), 
+                    'start_schedule': request.data.get('start_schedule'), 
+                    'end_schedule': request.data.get('end_schedule')
+            }
         
-        data = {
-                'lecturer': request.data.get('lecturer'), 
-                'start_schedule': request.data.get('start_schedule'), 
-                'end_schedule': request.data.get('end_schedule')
-        }
-       
-        serializer = ScheduleSerializer(instance = lecturer, data=data, partial = True)
-       
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializer = ScheduleSerializer(instance = lecturer, data=data, partial = True)
+        
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception:
+             return Response({"errors": {
+                "message":"something went wrong"
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

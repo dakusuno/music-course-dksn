@@ -10,15 +10,18 @@ from rest_framework.views import APIView
 # Create your views h ere.
 class LecturerView(APIView):
     def get(self,request, *args, **kwargs):
-        '''
-        List all lecturer
-        '''
+        try:
+            lecturers = Lecturer.objects
 
-        lecturers = Lecturer.objects
+            serializer = LectureSerializer(lecturers,many=True)
 
-        serializer = LectureSerializer(lecturers,many=True)
-
-        return Response(serializer.data,status=status.HTTP_200_OK)
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        
+        except Exception:
+             
+             return Response({"errors": {
+                "message":"something went wrong"
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     def post(self, request, *args, **kwargs):
         try:
@@ -51,49 +54,71 @@ class LecturerView(APIView):
 
 class LecturerDetailView(APIView):
     def get(self,request,lecturer_id, *args, **kwargs):
-        lecturer = self.get_object(lecturer_id)
+        try:
+            lecturer = self.get_object(lecturer_id)
 
-        if not lecturer:
-            return Response(
-                {"res": "Invalid Lecturer ID!"}, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            if not lecturer:
+                return Response(
+                    {"res": "Invalid Lecturer ID!"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            serializer = LectureSerializer(lecturer)
         
-        serializer = LectureSerializer(lecturer)
-       
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception:
+             return Response({"errors": {
+                "message":"something went wrong"
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
        
 
     def get_object(self,lecturer_id):
-        '''
-        Helper method to get the object with given lecture_id
-        '''
         try:
             return Lecturer.objects.get(id=lecturer_id)
         except Lecturer.DoesNotExist:
             return
 
     def put(self, request, lecturer_id, *args, **kwargs):
-        '''
-        Updates the todo item with given lecture_id if exists
-        '''
+        try:
+            lecturer = self.get_object(lecturer_id)
 
-        lecturer = self.get_object(lecturer_id)
-        if not lecturer_id:
+            if not lecturer_id:
+                return Response(
+                    {"res": "Invalid Lecturer ID!"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            data = {
+                'first_name': request.data.get('first_name'), 
+                    'last_name': request.data.get('last_name'), 
+                    'course': request.data.get('course')
+            }
+        
+            serializer = LectureSerializer(instance = lecturer, data=data, partial = True)
+        
+            if serializer.is_valid():
+
+                serializer.save()
+                
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception:
+            
+             return Response({"errors": {
+                "message":"something went wrong"
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def delete(self, request, lecturer_id, *args, **kwargs):
+        todo_instance = self.get_object(lecturer_id)
+        if not todo_instance:
             return Response(
-                {"res": "Invalid Lecturer ID!"}, 
+                {"res": "ID Not Found!"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
-        data = {
-               'first_name': request.data.get('first_name'), 
-                'last_name': request.data.get('last_name'), 
-                'course': request.data.get('course')
-        }
-       
-        serializer = LectureSerializer(instance = lecturer, data=data, partial = True)
-       
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        todo_instance.delete()
+        return Response(
+            {"res": "success"},
+            status=status.HTTP_200_OK
+        )
