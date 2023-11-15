@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from django.shortcuts import render
 
 from django.shortcuts import render
@@ -24,7 +25,9 @@ class ScheduleView(APIView):
 
             return Response({'data':serializer.data},status=status.HTTP_200_OK)
         
-        except Exception:
+        except Exception as e:
+            print (e)
+            
             return Response({"errors": {
                 "message":"something went wrong"
             }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -50,9 +53,16 @@ class ScheduleView(APIView):
              return Response({"errors": {
                 "message":"A Not Found"
             }}, status=status.HTTP_404_NOT_FOUND)
-        
-        except Exception:
-             return Response({"errors": {
+        except ValidationError as val:
+            print (val)
+
+            return Response({"errors": {
+                "message":val
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            print (e)
+
+            return Response({"errors": {
                 "message":"something went wrong"
             }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
@@ -73,8 +83,10 @@ class ScheduleDetailView(APIView):
         
             return Response(serializer.data, status=status.HTTP_200_OK)
         
-        except Exception:
-             return Response({"errors": {
+        except Exception as e:
+            print (e)
+            
+            Response({"errors": {
                 "message":"something went wrong"
             }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
        
@@ -109,8 +121,33 @@ class ScheduleDetailView(APIView):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except ValidationError as val:
+            print (val)
+
+            return Response({"errors": {
+                "message":val
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            print (e)
+            return Response({"errors": {
+                "message":"something went wrong"
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        except Exception:
-             return Response({"errors": {
+    def delete(self, request, schedule_id, *args, **kwargs):
+        try:
+            schedule = self.get_object(schedule_id)
+            if not schedule:
+                return Response(
+                    {"res": "ID Not Found!"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            schedule.delete()
+            return Response(
+                {"res": "success"},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            print(e)
+            return Response({"errors": {
                 "message":"something went wrong"
             }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from django.shortcuts import render
 from src import schedule
 
@@ -17,9 +18,10 @@ class LecturerView(APIView):
 
             return Response(serializer.data,status=status.HTTP_200_OK)
         
-        except Exception:
-             
-             return Response({"errors": {
+        except Exception as e:
+            print (e)
+            
+            return Response({"errors": {
                 "message":"something went wrong"
             }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
@@ -35,21 +37,29 @@ class LecturerView(APIView):
             }
 
             serializer = LectureSerializer(data=data)
+
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data,status=status.HTTP_201_CREATED)
+        except ValidationError as val:
+            print (val)
+
+            return Response({"errors": {
+                "message":val
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except schedule.DoesNotExist:
             return Response({"errors": {
                 "body": [
                     "ID Not Found"
                 ]
             }}, status=status.HTTP_404_NOT_FOUND)
-        except Exception:
+        
+        except Exception as e:
+            print (e)
+            
             return Response({"errors": {
-                "body": [
-                    "Bad Request"
-                ]
-            }}, status=status.HTTP_404_NOT_FOUND)
+                "message":"something went wrong"
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
 
 class LecturerDetailView(APIView):
@@ -66,8 +76,11 @@ class LecturerDetailView(APIView):
             serializer = LectureSerializer(lecturer)
         
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception:
-             return Response({"errors": {
+        
+        except Exception as e:
+            print (e)
+            
+            return Response({"errors": {
                 "message":"something went wrong"
             }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
        
@@ -104,21 +117,36 @@ class LecturerDetailView(APIView):
             
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        except Exception:
+        except ValidationError as val:
+            print (val)
+
+            return Response({"errors": {
+                "message":val
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        except Exception as e:
+            print (e)
             
-             return Response({"errors": {
+            return Response({"errors": {
                 "message":"something went wrong"
             }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     def delete(self, request, lecturer_id, *args, **kwargs):
-        todo_instance = self.get_object(lecturer_id)
-        if not todo_instance:
+        try:
+            todo_instance = self.get_object(lecturer_id)
+            if not todo_instance:
+                return Response(
+                    {"res": "ID Not Found!"}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            todo_instance.delete()
             return Response(
-                {"res": "ID Not Found!"}, 
-                status=status.HTTP_400_BAD_REQUEST
+                {"res": "success"},
+                status=status.HTTP_200_OK
             )
-        todo_instance.delete()
-        return Response(
-            {"res": "success"},
-            status=status.HTTP_200_OK
-        )
+        except Exception as e:
+            print (e)
+            
+            return Response({"errors": {
+                "message":"something went wrong"
+            }}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
