@@ -22,29 +22,24 @@ import android.widget.DatePicker;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 import id.my.radityawan.music_course_mobile.R;
-import id.my.radityawan.music_course_mobile.databinding.FragmentLecturersAddBinding;
 import id.my.radityawan.music_course_mobile.databinding.FragmentScheduleAddBinding;
+import id.my.radityawan.music_course_mobile.events.LecturerDeletedEvent;
+import id.my.radityawan.music_course_mobile.events.LecturerUpdatedEvent;
 import id.my.radityawan.music_course_mobile.events.ScheduleCreatedEvent;
-import id.my.radityawan.music_course_mobile.features.lecturers.LecturersFragment;
-import id.my.radityawan.music_course_mobile.features.lecturersadd.LecturersAddFragment;
-import id.my.radityawan.music_course_mobile.features.lecturersadd.LecturersAddViewModel;
 import id.my.radityawan.music_course_mobile.model.lecturer.Lecturer;
-import id.my.radityawan.music_course_mobile.model.lecturer.LecturerRequest;
 import id.my.radityawan.music_course_mobile.model.schedule.Schedule;
 import id.my.radityawan.music_course_mobile.model.schedule.ScheduleRequest;
 
 public class ScheduleAddFragment extends Fragment {
 
     private ScheduleAddViewModel mViewModel;
-
-    private Lecturer lecturerData;
 
     private FragmentScheduleAddBinding binding;
 
@@ -82,7 +77,7 @@ public class ScheduleAddFragment extends Fragment {
                         @Override
                         public void onDateSet(DatePicker view, int year,
                                               int monthOfYear, int dayOfMonth) {
-                            startDate = new Date(year-1900, monthOfYear, dayOfMonth);
+                            startDate = new Date(year - 1900, monthOfYear, dayOfMonth);
 
                             String dateFormat = "dd MMM yyyy, hh:mm:ss";
 
@@ -107,7 +102,7 @@ public class ScheduleAddFragment extends Fragment {
                         @Override
                         public void onDateSet(DatePicker view, int year,
                                               int monthOfYear, int dayOfMonth) {
-                            endDate = new Date(year-1900, monthOfYear, dayOfMonth);
+                            endDate = new Date(year - 1900, monthOfYear, dayOfMonth);
 
                             String dateFormat = "dd MMM yyyy, hh:mm:ss";
 
@@ -122,24 +117,34 @@ public class ScheduleAddFragment extends Fragment {
             @Override
             public void onChanged(Lecturer lecturer) {
                 if (lecturer != null) {
-                    lecturerData = lecturer;
+                    mViewModel.setLecturer(lecturer);
+                }
+            }
+        });
+
+        mViewModel.getLecturer().observe(getViewLifecycleOwner(), new Observer<Lecturer>() {
+            @Override
+            public void onChanged(Lecturer lecturer) {
+                if (lecturer != null) {
                     binding.lecturerID.setText(lecturer.firstName);
+                } else {
+                    binding.lecturerID.setText(R.string.lecturer_label);
                 }
             }
         });
 
         binding.confirm.setOnClickListener(view -> {
-            if(startDate == null || endDate == null || lecturerData == null){
+            if (startDate == null || endDate == null || mViewModel.getLecturer().getValue() == null) {
                 Snackbar.make(binding.getRoot(), "Data Belum Diisi", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-            }else{
-                ScheduleRequest request = new ScheduleRequest(startDate, endDate, lecturerData.id);
+            } else {
+                ScheduleRequest request = new ScheduleRequest(startDate, endDate,  mViewModel.getLecturer().getValue().id);
 
-                mViewModel.fetchRepos(request);
+                mViewModel.createSchedule(request);
             }
         });
 
-        mViewModel.getLecturer().observe(getViewLifecycleOwner(), new Observer<Schedule>() {
+        mViewModel.getSchedule().observe(getViewLifecycleOwner(), new Observer<Schedule>() {
             @Override
             public void onChanged(Schedule value) {
                 if (value != null) {
@@ -155,5 +160,38 @@ public class ScheduleAddFragment extends Fragment {
 
 
         return binding.getRoot();
+    }
+
+    @Subscribe
+    public void lecturerUpdated(LecturerUpdatedEvent lecturerUpdatedEvent) {
+        Lecturer lecturer = mViewModel.getLecturer().getValue();
+
+        assert lecturer != null;
+        if (Objects.equals(lecturer.id, lecturerUpdatedEvent.lecturer.id)) {
+            mViewModel.setLecturer(lecturerUpdatedEvent.lecturer);
+        }
+    }
+
+    @Subscribe
+    public void lecturerDeleted(LecturerDeletedEvent lecturerDeletedEvent) {
+        Lecturer lecturer = mViewModel.getLecturer().getValue();
+
+        assert lecturer != null;
+        if (Objects.equals(lecturer.id, lecturerDeletedEvent.lecturer.id)) {
+            mViewModel.setLecturer(null);
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

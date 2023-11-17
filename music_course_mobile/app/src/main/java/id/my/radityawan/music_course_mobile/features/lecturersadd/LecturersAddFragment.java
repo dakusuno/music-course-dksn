@@ -20,12 +20,16 @@ import android.widget.ArrayAdapter;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.List;
 import java.util.Objects;
 
 import id.my.radityawan.music_course_mobile.R;
 import id.my.radityawan.music_course_mobile.databinding.FragmentLecturersAddBinding;
 import id.my.radityawan.music_course_mobile.databinding.FragmentLecturersBinding;
+import id.my.radityawan.music_course_mobile.events.LecturerCreatedEvent;
+import id.my.radityawan.music_course_mobile.events.ScheduleCreatedEvent;
 import id.my.radityawan.music_course_mobile.features.lecturers.LecturersFragment;
 import id.my.radityawan.music_course_mobile.features.lecturers.LecturersViewModel;
 import id.my.radityawan.music_course_mobile.features.lecturers.MyLecturersRecyclerViewAdapter;
@@ -70,10 +74,12 @@ public class LecturersAddFragment extends Fragment implements AdapterView.OnItem
             mViewModel.fetchRepos(request);
         });
 
-        mViewModel.getLecturer().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mViewModel.getLecturer().observe(getViewLifecycleOwner(), new Observer<Lecturer>() {
             @Override
-            public void onChanged(Boolean value) {
-                if (value) {
+            public void onChanged(Lecturer value) {
+                if (value != null) {
+                    EventBus.getDefault().post(new LecturerCreatedEvent(value));
+
                     NavHostFragment.findNavController(LecturersAddFragment.this).popBackStack();
                     if(Boolean.FALSE.equals(mViewModel.getError().getValue())){
                         Snackbar.make(binding.getRoot(), "Data Berhasil Disimpan", Snackbar.LENGTH_LONG)

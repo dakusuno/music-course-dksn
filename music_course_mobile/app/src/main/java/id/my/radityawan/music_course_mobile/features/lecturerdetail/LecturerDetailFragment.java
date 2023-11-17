@@ -19,11 +19,16 @@ import android.widget.Spinner;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.Objects;
 
 import id.my.radityawan.music_course_mobile.R;
 import id.my.radityawan.music_course_mobile.databinding.FragmentLecturerDetailBinding;
 import id.my.radityawan.music_course_mobile.databinding.FragmentLecturersAddBinding;
+import id.my.radityawan.music_course_mobile.events.LecturerDeletedEvent;
+import id.my.radityawan.music_course_mobile.events.LecturerUpdatedEvent;
+import id.my.radityawan.music_course_mobile.events.ScheduleUpdatedEvent;
 import id.my.radityawan.music_course_mobile.features.lecturersadd.LecturersAddFragment;
 import id.my.radityawan.music_course_mobile.features.lecturersadd.LecturersAddViewModel;
 import id.my.radityawan.music_course_mobile.model.lecturer.Course;
@@ -70,10 +75,11 @@ public class LecturerDetailFragment extends Fragment implements AdapterView.OnIt
             mViewModel.setLecturerDelete(lecturer.id);
         });
 
-        mViewModel.getLecturerUpdate().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mViewModel.getLecturerUpdate().observe(getViewLifecycleOwner(), new Observer<Lecturer>() {
             @Override
-            public void onChanged(Boolean value) {
-                if (value) {
+            public void onChanged(Lecturer value) {
+                if (value != null) {
+                    EventBus.getDefault().post(new LecturerUpdatedEvent(value));
                     NavHostFragment.findNavController(LecturerDetailFragment.this).popBackStack();
                     if(Boolean.FALSE.equals(mViewModel.getError().getValue())){
                         Snackbar.make(binding.getRoot(), "Data Berhasil Disimpan", Snackbar.LENGTH_LONG)
@@ -90,6 +96,7 @@ public class LecturerDetailFragment extends Fragment implements AdapterView.OnIt
             @Override
             public void onChanged(Boolean value) {
                 if (value) {
+                    EventBus.getDefault().post(new LecturerDeletedEvent(lecturer));
                     NavHostFragment.findNavController(LecturerDetailFragment.this).popBackStack();
                     if(Boolean.FALSE.equals(mViewModel.getError().getValue())){
                         Snackbar.make(binding.getRoot(), "Data Berhasil Dihapus", Snackbar.LENGTH_LONG)

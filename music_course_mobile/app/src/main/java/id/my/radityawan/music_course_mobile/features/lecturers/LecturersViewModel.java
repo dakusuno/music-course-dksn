@@ -68,6 +68,10 @@ public class LecturersViewModel extends ViewModel {
                 }));
     }
 
+    public void updateListData(List<Lecturer> updatedLecturers) {
+        lecturers.setValue(updatedLecturers);
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();

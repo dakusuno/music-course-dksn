@@ -26,12 +26,12 @@ public class LecturersAddViewModel extends ViewModel {
 
     private CompositeDisposable disposable;
 
-    private final MutableLiveData<Boolean> lecturer = new MutableLiveData<>();
+    private final MutableLiveData<Lecturer> lecturer = new MutableLiveData<>();
     private final MutableLiveData<Boolean> repoLoadError = new MutableLiveData<>();
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>();
 
-    LiveData<Boolean> getLecturer() {
-     return lecturer;
+    LiveData<Lecturer> getLecturer() {
+        return lecturer;
     }
 
     LiveData<Boolean> getError() {
@@ -51,15 +51,13 @@ public class LecturersAddViewModel extends ViewModel {
                 .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<LecturerResponse>() {
                     @Override
                     public void onSuccess(LecturerResponse value) {
-                        Log.d("success","aaaaaaaaaaa");
                         repoLoadError.setValue(false);
-                        lecturer.setValue(true);
+                        lecturer.setValue(value.data);
                         loading.setValue(false);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d("error cyin",e.toString());
                         repoLoadError.setValue(false);
                         loading.setValue(false);
                     }

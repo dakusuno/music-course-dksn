@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import id.my.radityawan.music_course_mobile.api.APIClient;
 import id.my.radityawan.music_course_mobile.api.LecturerApi;
+import id.my.radityawan.music_course_mobile.model.lecturer.Lecturer;
 import id.my.radityawan.music_course_mobile.model.lecturer.LecturerDeleteResponse;
 import id.my.radityawan.music_course_mobile.model.lecturer.LecturerRequest;
 import id.my.radityawan.music_course_mobile.model.lecturer.LecturerResponse;
@@ -22,13 +23,13 @@ public class LecturerDetailViewModel extends ViewModel {
 
     private CompositeDisposable disposable;
 
-    private final MutableLiveData<Boolean> lecturerUpdate = new MutableLiveData<>();
+    private final MutableLiveData<Lecturer> lecturerUpdate = new MutableLiveData<>();
 
     private final MutableLiveData<Boolean> lecturerDelete = new MutableLiveData<>();
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>();
     private final MutableLiveData<Boolean> repoLoadError = new MutableLiveData<>();
 
-    LiveData<Boolean> getLecturerUpdate() {
+    LiveData<Lecturer> getLecturerUpdate() {
         return lecturerUpdate;
     }
 
@@ -54,7 +55,7 @@ public class LecturerDetailViewModel extends ViewModel {
                     @Override
                     public void onSuccess(LecturerResponse value) {
                         repoLoadError.setValue(false);
-                        lecturerUpdate.setValue(true);
+                        lecturerUpdate.setValue(value.data);
                         loading.setValue(false);
                     }
 

@@ -21,6 +21,13 @@ public class Schedule implements Parcelable {
     @SerializedName("lecturer")
     public Lecturer lecturer;
 
+    public Schedule(Integer id, Date startSchedule, Date endSchedule, Lecturer lecturer) {
+        this.id = id;
+        this.startSchedule = startSchedule;
+        this.endSchedule = endSchedule;
+        this.lecturer = lecturer;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -54,4 +61,8 @@ public class Schedule implements Parcelable {
         }
 
     };
+
+    public Schedule copyLecturer(Lecturer lecturer) {
+        return new Schedule(this.id, this.startSchedule, this.endSchedule, lecturer);
+    }
 }
