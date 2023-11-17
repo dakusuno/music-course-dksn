@@ -67,4 +67,5 @@
     <string name="lecture_add_title">Buat Pengajar Baru</string>
     <string name="schedule_add_title">Buat Jadwal Baru</string>
     <string name="update_pengajar">Update Pengajar</string>
+    <string name="lecturers_title">Daftar Pengajar</string>
 </resources>

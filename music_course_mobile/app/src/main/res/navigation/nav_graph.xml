@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/lecturersFragment"
         android:name="id.my.radityawan.music_course_mobile.features.lecturers.LecturersFragment"
-        android:label="fragment_item_list"
+        android:label="@string/lecturers_title"
         tools:layout="@layout/fragment_lecturers">
         <action
             android:id="@+id/action_lecturersFragment_to_lecturersAddFragment"
