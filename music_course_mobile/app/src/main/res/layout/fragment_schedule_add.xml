@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".features.scheduleadd.ScheduleAddFragment">
+
+
+    <TextView
+        android:id="@+id/lecturerID"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:text="@string/lecturer_label"
+        tools:text="aaaaaaaaaaaaa" />
+
+    <TextView
+        android:id="@+id/start_date"
+        android:text="@string/start_date"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        tools:text="aaaaaaaaaaaaa" />
+
+    <TextView
+        android:id="@+id/end_date"
+        android:text="@string/end_date"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        tools:text="aaaaaaaaaaaaa" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="right"
+        android:layout_margin="10dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/create" />
+</LinearLayout>

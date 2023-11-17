@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/schedulesFragment">
+
+    <fragment
+        android:id="@+id/lecturersFragment"
+        android:name="id.my.radityawan.music_course_mobile.features.lecturers.LecturersFragment"
+        android:label="fragment_item_list"
+        tools:layout="@layout/fragment_lecturers">
+        <action
+            android:id="@+id/action_lecturersFragment_to_lecturersAddFragment"
+            app:destination="@id/lecturersAddFragment" />
+        <action
+            android:id="@+id/action_lecturersFragment_to_lecturerDetailFragment"
+            app:destination="@id/lecturerDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/lecturersAddFragment"
+        android:name="id.my.radityawan.music_course_mobile.features.lecturersadd.LecturersAddFragment"
+        android:label="fragment_lecturers_add"
+        tools:layout="@layout/fragment_lecturers_add" />
+    <fragment
+        android:id="@+id/lecturerDetailFragment"
+        android:name="id.my.radityawan.music_course_mobile.features.lecturerdetail.LecturerDetailFragment"
+        android:label="fragment_lecturer_detail"
+        tools:layout="@layout/fragment_lecturer_detail">
+        <argument
+            android:name="lecturer"
+            app:argType="id.my.radityawan.music_course_mobile.model.lecturer.Lecturer" />
+    </fragment>
+    <fragment
+        android:id="@+id/schedulesFragment"
+        android:name="id.my.radityawan.music_course_mobile.features.schedules.SchedulesFragment"
+        android:label="@string/schedule"
+        tools:layout="@layout/fragment_schedules">
+        <action
+            android:id="@+id/action_schedulesFragment_to_scheduleAddFragment"
+            app:destination="@id/scheduleAddFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/scheduleAddFragment"
+        android:name="id.my.radityawan.music_course_mobile.features.scheduleadd.ScheduleAddFragment"
+        android:label="fragment_schedule_add"
+        tools:layout="@layout/fragment_schedule_add" >
+        <action
+            android:id="@+id/action_scheduleAddFragment_to_lecturersFragment"
+            app:destination="@id/lecturersFragment" />
+    </fragment>
+
+</navigation>
