@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_schedulesFragment_to_scheduleAddFragment"
             app:destination="@id/scheduleAddFragment" />
+        <action
+            android:id="@+id/action_schedulesFragment_to_scheduleDetailFragment"
+            app:destination="@id/scheduleDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/scheduleAddFragment"
@@ -49,5 +52,16 @@
             android:id="@+id/action_scheduleAddFragment_to_lecturersFragment"
             app:destination="@id/lecturersFragment" />
     </fragment>
-
+    <fragment
+        android:id="@+id/scheduleDetailFragment"
+        android:name="id.my.radityawan.music_course_mobile.features.scheduledetail.ScheduleDetailFragment"
+        android:label="Update Jadwal"
+        tools:layout="@layout/fragment_schedule_detail" >
+        <action
+            android:id="@+id/action_scheduleDetailFragment_to_lecturersFragment"
+            app:destination="@id/lecturersFragment" />
+        <argument
+            android:name="schedule"
+            app:argType="id.my.radityawan.music_course_mobile.model.schedule.Schedule" />
+    </fragment>
 </navigation>

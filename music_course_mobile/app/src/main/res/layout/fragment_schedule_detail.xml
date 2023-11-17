@@ -38,12 +38,28 @@
         android:background="@drawable/border"
         tools:text="aaaaaaaaaaaaa" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/confirm"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_gravity="right"
-        android:layout_margin="10dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/create" />
+    <LinearLayout
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:id="@+id/delete"
+            android:layout_gravity="right"
+            android:text="@string/delete"
+            android:layout_marginTop="8dp"/>
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:id="@+id/update"
+            android:layout_gravity="right"
+            android:text="@string/update"
+            android:layout_marginTop="8dp"
+            android:layout_margin="10dp"/>
+    </LinearLayout>
 </LinearLayout>

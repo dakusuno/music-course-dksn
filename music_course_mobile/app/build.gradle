@@ -54,7 +54,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
     // define a BOM and its vTersion
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.11.0"))
-
+    implementation("org.greenrobot:eventbus:3.3.1")
     // define any required OkHttp artifacts without version
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")

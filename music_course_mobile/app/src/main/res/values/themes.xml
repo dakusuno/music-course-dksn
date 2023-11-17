@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.Music_course_mobile" parent="Base.Theme.Music_course_mobile" />
+
+    <style name="ThemeOverlay.Music_course_mobile.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
+        <item name="fullscreenTextColor">@color/light_blue_A200</item>
+    </style>
 </resources>

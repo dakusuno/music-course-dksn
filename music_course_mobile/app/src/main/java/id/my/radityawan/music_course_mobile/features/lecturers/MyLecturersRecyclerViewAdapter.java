@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import id.my.radityawan.music_course_mobile.R;
 import id.my.radityawan.music_course_mobile.databinding.LecturerItemBinding;
 import id.my.radityawan.music_course_mobile.model.lecturer.Lecturer;
 
@@ -58,6 +59,13 @@ public class MyLecturersRecyclerViewAdapter extends RecyclerView.Adapter<MyLectu
             super(binding.getRoot());
             mIdView = binding.itemNumber;
             mContentView = binding.content;
+            binding.update.setOnClickListener(view -> {
+                LecturersFragmentDirections.ActionLecturersFragmentToLecturerDetailFragment action =
+                        LecturersFragmentDirections.actionLecturersFragmentToLecturerDetailFragment(mItem);
+
+                NavController controller = Navigation.findNavController(view);
+                controller.navigate(action);
+            });
             binding.getRoot().setOnClickListener(view -> {
                 NavController controller = Navigation.findNavController(view);
 

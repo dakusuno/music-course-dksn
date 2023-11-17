@@ -67,6 +67,10 @@ public class SchedulesViewModel extends ViewModel {
                 }));
     }
 
+    public void updateListData(List<Schedule> newSchedules) {
+        schedules.setValue(newSchedules);
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();

@@ -8,7 +8,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,10 +15,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import id.my.radityawan.music_course_mobile.R;
 import id.my.radityawan.music_course_mobile.databinding.FragmentSchedulesBinding;
+import id.my.radityawan.music_course_mobile.events.ScheduleCreatedEvent;
+import id.my.radityawan.music_course_mobile.events.ScheduleUpdatedEvent;
 import id.my.radityawan.music_course_mobile.model.schedule.Schedule;
 
 /**
@@ -27,6 +33,8 @@ import id.my.radityawan.music_course_mobile.model.schedule.Schedule;
  */
 public class SchedulesFragment extends Fragment {
     private FragmentSchedulesBinding binding;
+
+    private SchedulesViewModel schedulesViewModel;
 
     @SuppressWarnings("unused")
     public static SchedulesFragment newInstance(int columnCount) {
@@ -47,7 +55,7 @@ public class SchedulesFragment extends Fragment {
 
         binding = FragmentSchedulesBinding.inflate(inflater, container, false);
 
-        SchedulesViewModel lecturersViewModel = new ViewModelProvider(this).get(SchedulesViewModel.class);
+        schedulesViewModel = new ViewModelProvider(this).get(SchedulesViewModel.class);
 
         Context context = binding.getRoot().getContext();
 
@@ -56,7 +64,7 @@ public class SchedulesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.addItemDecoration(new DividerItemDecoration(context,
                 DividerItemDecoration.VERTICAL));
-        lecturersViewModel.getSchedules().observe(getViewLifecycleOwner(), new Observer<List<Schedule>>() {
+        schedulesViewModel.getSchedules().observe(getViewLifecycleOwner(), new Observer<List<Schedule>>() {
             @Override
             public void onChanged(List<Schedule> schedules) {
                 recyclerView.setAdapter(new MyScheduleRecyclerViewAdapter(schedules));
@@ -67,9 +75,42 @@ public class SchedulesFragment extends Fragment {
 
         binding.fab.setOnClickListener(view -> {
             NavHostFragment.findNavController(SchedulesFragment.this)
-                    .navigate(R.id.action_schedulesFragment_to_scheduleAddFragment  );
+                    .navigate(R.id.action_schedulesFragment_to_scheduleAddFragment);
         });
 
         return binding.getRoot();
+    }
+
+    @Subscribe
+    public void scheduleAdded(ScheduleCreatedEvent scheduleCreated) {
+        List<Schedule> latestData = schedulesViewModel.getSchedules().getValue();
+
+        assert latestData != null;
+        latestData.add(scheduleCreated.schedule);
+
+        schedulesViewModel.updateListData(latestData);
+    }
+
+    @Subscribe
+    public void scheduleUpdated(ScheduleUpdatedEvent scheduleUpdatedEvent) {
+        List<Schedule> latestData = schedulesViewModel.getSchedules().getValue();
+
+        assert latestData != null;
+        List<Schedule> updatedData = latestData.stream().map(e -> Objects.equals(e.id, scheduleUpdatedEvent.schedule.id) ? scheduleUpdatedEvent.schedule : e).collect(Collectors.toList());
+
+        schedulesViewModel.updateListData(updatedData);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }
