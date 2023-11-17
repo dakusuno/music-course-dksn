@@ -48,7 +48,7 @@ class ScheduleView(APIView):
 
             serializer = ScheduleSerializer(schedule,context=serializer_context)
             
-            return Response(serializer.data ,status=status.HTTP_200_OK)
+            return Response({"data":serializer.data} ,status=status.HTTP_200_OK)
         except Lecturer.DoesNotExist:
              return Response({"errors": {
                 "message":"A Not Found"
@@ -102,24 +102,30 @@ class ScheduleDetailView(APIView):
 
     def put(self, request, schedule_id, *args, **kwargs):
         try:
-            lecturer = self.get_object(schedule_id)
-            if not schedule_id:
+            schedule = self.get_object(schedule_id)
+            if not schedule:
                 return Response(
                     {"res": "Invalid Lecturer ID!"}, 
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
+            lecturer_id = request.data.get('lecturer') 
+            
+            lecturer = Lecturer.objects.get(id=lecturer_id)
+
+            nSchedule = Schedule(id=schedule.id, lecturer=lecturer,start_schedule=request.data.get("start_schedule"),end_schedule=request.data.get("end_schedule"),)
+
             data = {
                     'lecturer': request.data.get('lecturer'), 
                     'start_schedule': request.data.get('start_schedule'), 
                     'end_schedule': request.data.get('end_schedule')
             }
         
-            serializer = ScheduleSerializer(instance = lecturer, data=data, partial = True)
+            serializer = ScheduleSerializer(instance = nSchedule, data=data, partial = True)
         
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response({"data":serializer.data}, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except ValidationError as val:
             print (val)
@@ -143,7 +149,7 @@ class ScheduleDetailView(APIView):
                 )
             schedule.delete()
             return Response(
-                {"res": "success"},
+                {"data": "success"},
                 status=status.HTTP_200_OK
             )
         except Exception as e:

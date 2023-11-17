@@ -16,7 +16,7 @@ class LecturerView(APIView):
 
             serializer = LectureSerializer(lecturers,many=True)
 
-            return Response(serializer.data,status=status.HTTP_200_OK)
+            return Response({'data':serializer.data},status=status.HTTP_200_OK)
         
         except Exception as e:
             print (e)
@@ -110,10 +110,8 @@ class LecturerDetailView(APIView):
             serializer = LectureSerializer(instance = lecturer, data=data, partial = True)
         
             if serializer.is_valid():
-
                 serializer.save()
-                
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response({"data":serializer.data}, status=status.HTTP_200_OK)
             
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
@@ -141,7 +139,7 @@ class LecturerDetailView(APIView):
                 )
             todo_instance.delete()
             return Response(
-                {"res": "success"},
+                {"data": "success"},
                 status=status.HTTP_200_OK
             )
         except Exception as e:
