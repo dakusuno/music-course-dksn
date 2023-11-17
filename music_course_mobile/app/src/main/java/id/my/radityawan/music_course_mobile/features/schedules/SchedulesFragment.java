@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import id.my.radityawan.music_course_mobile.R;
 import id.my.radityawan.music_course_mobile.databinding.FragmentSchedulesBinding;
 import id.my.radityawan.music_course_mobile.events.ScheduleCreatedEvent;
+import id.my.radityawan.music_course_mobile.events.ScheduleDeletedEvent;
 import id.my.radityawan.music_course_mobile.events.ScheduleUpdatedEvent;
 import id.my.radityawan.music_course_mobile.model.schedule.Schedule;
 
@@ -97,6 +98,17 @@ public class SchedulesFragment extends Fragment {
 
         assert latestData != null;
         List<Schedule> updatedData = latestData.stream().map(e -> Objects.equals(e.id, scheduleUpdatedEvent.schedule.id) ? scheduleUpdatedEvent.schedule : e).collect(Collectors.toList());
+
+        schedulesViewModel.updateListData(updatedData);
+    }
+
+    @Subscribe
+    public void scheduleDeleted(ScheduleDeletedEvent scheduleDeletedEvent) {
+        List<Schedule> latestData = schedulesViewModel.getSchedules().getValue();
+
+        assert latestData != null;
+
+        List<Schedule> updatedData = latestData.stream().filter(e -> !Objects.equals(e.id, scheduleDeletedEvent.schedule.id)).collect(Collectors.toList());
 
         schedulesViewModel.updateListData(updatedData);
     }

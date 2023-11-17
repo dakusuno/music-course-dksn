@@ -27,6 +27,7 @@ import java.util.Objects;
 import id.my.radityawan.music_course_mobile.R;
 import id.my.radityawan.music_course_mobile.databinding.FragmentScheduleDetailBinding;
 import id.my.radityawan.music_course_mobile.events.ScheduleCreatedEvent;
+import id.my.radityawan.music_course_mobile.events.ScheduleDeletedEvent;
 import id.my.radityawan.music_course_mobile.events.ScheduleUpdatedEvent;
 import id.my.radityawan.music_course_mobile.model.lecturer.Lecturer;
 import id.my.radityawan.music_course_mobile.model.schedule.Schedule;
@@ -166,6 +167,7 @@ public class ScheduleDetailFragment extends Fragment {
             @Override
             public void onChanged(Boolean value) {
                 if (value) {
+                    EventBus.getDefault().post(new ScheduleDeletedEvent(schedule));
                     NavHostFragment.findNavController(ScheduleDetailFragment.this).popBackStack();
                     if (Boolean.FALSE.equals(mViewModel.getError().getValue())) {
                         Snackbar.make(binding.getRoot(), "Data Berhasil Dihapus", Snackbar.LENGTH_LONG)

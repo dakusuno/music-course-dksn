@@ -7,5 +7,5 @@ public class ScheduleDeletedEvent {
         this.schedule = schedule;
     }
 
-    Schedule schedule;
+    public Schedule schedule;
 }
