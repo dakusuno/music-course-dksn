@@ -40,7 +40,8 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'src.schedule',
-    'src.lecturer'
+    'src.lecturer',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -51,9 +52,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'src.urls'
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 TEMPLATES = [
     {
@@ -84,7 +88,7 @@ DATABASES = {
     }
 }
 
-
+ALLOWED_HOSTS=['10.0.2.2','127.0.0.1']
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
