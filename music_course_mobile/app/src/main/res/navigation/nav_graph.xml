@@ -20,12 +20,12 @@
     <fragment
         android:id="@+id/lecturersAddFragment"
         android:name="id.my.radityawan.music_course_mobile.features.lecturersadd.LecturersAddFragment"
-        android:label="fragment_lecturers_add"
+        android:label="@string/lecture_add_title"
         tools:layout="@layout/fragment_lecturers_add" />
     <fragment
         android:id="@+id/lecturerDetailFragment"
         android:name="id.my.radityawan.music_course_mobile.features.lecturerdetail.LecturerDetailFragment"
-        android:label="fragment_lecturer_detail"
+        android:label="@string/update_pengajar"
         tools:layout="@layout/fragment_lecturer_detail">
         <argument
             android:name="lecturer"
@@ -46,7 +46,7 @@
     <fragment
         android:id="@+id/scheduleAddFragment"
         android:name="id.my.radityawan.music_course_mobile.features.scheduleadd.ScheduleAddFragment"
-        android:label="fragment_schedule_add"
+        android:label="@string/schedule_add_title"
         tools:layout="@layout/fragment_schedule_add" >
         <action
             android:id="@+id/action_scheduleAddFragment_to_lecturersFragment"

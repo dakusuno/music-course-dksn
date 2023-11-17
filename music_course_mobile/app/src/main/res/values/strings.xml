@@ -64,4 +64,7 @@
     </string-array>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="lecture_add_title">Buat Pengajar Baru</string>
+    <string name="schedule_add_title">Buat Jadwal Baru</string>
+    <string name="update_pengajar">Update Pengajar</string>
 </resources>
