@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -28,8 +30,12 @@ import id.my.radityawan.music_course_mobile.R;
 import id.my.radityawan.music_course_mobile.databinding.FragmentLecturersAddBinding;
 import id.my.radityawan.music_course_mobile.databinding.FragmentScheduleAddBinding;
 import id.my.radityawan.music_course_mobile.features.lecturers.LecturersFragment;
+import id.my.radityawan.music_course_mobile.features.lecturersadd.LecturersAddFragment;
+import id.my.radityawan.music_course_mobile.features.lecturersadd.LecturersAddViewModel;
 import id.my.radityawan.music_course_mobile.model.lecturer.Lecturer;
+import id.my.radityawan.music_course_mobile.model.lecturer.LecturerRequest;
 import id.my.radityawan.music_course_mobile.model.schedule.Schedule;
+import id.my.radityawan.music_course_mobile.model.schedule.ScheduleRequest;
 
 public class ScheduleAddFragment extends Fragment {
 
@@ -49,8 +55,9 @@ public class ScheduleAddFragment extends Fragment {
 
         binding = FragmentScheduleAddBinding.inflate(inflater, container, false);
 
+        mViewModel = new ViewModelProvider(this).get(ScheduleAddViewModel.class);
+
         binding.lecturerID.setOnClickListener(view -> {
-            Log.d("aaaaaa", "vbbbbbbbbbb");
             NavHostFragment.findNavController(ScheduleAddFragment.this)
                     .navigate(R.id.action_scheduleAddFragment_to_lecturersFragment);
         });
@@ -72,7 +79,7 @@ public class ScheduleAddFragment extends Fragment {
                         @Override
                         public void onDateSet(DatePicker view, int year,
                                               int monthOfYear, int dayOfMonth) {
-                            startDate = new Date(year, monthOfYear, dayOfMonth);
+                            startDate = new Date(year-1900, monthOfYear, dayOfMonth);
 
                             String dateFormat = "dd MMM yyyy, hh:mm:ss";
 
@@ -97,7 +104,7 @@ public class ScheduleAddFragment extends Fragment {
                         @Override
                         public void onDateSet(DatePicker view, int year,
                                               int monthOfYear, int dayOfMonth) {
-                            endDate = new Date(year, monthOfYear, dayOfMonth);
+                            endDate = new Date(year-1900, monthOfYear, dayOfMonth);
 
                             String dateFormat = "dd MMM yyyy, hh:mm:ss";
 
@@ -118,6 +125,29 @@ public class ScheduleAddFragment extends Fragment {
             }
         });
 
+        binding.confirm.setOnClickListener(view -> {
+            if(startDate == null || endDate == null || lecturerData == null){
+                Snackbar.make(binding.getRoot(), "Data Belum Diisi", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }else{
+                ScheduleRequest request = new ScheduleRequest(startDate, endDate, lecturerData.id);
+
+                mViewModel.fetchRepos(request);
+            }
+        });
+
+        mViewModel.getLecturer().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean value) {
+                if (value) {
+                    NavHostFragment.findNavController(ScheduleAddFragment.this).popBackStack();
+                    if (Boolean.FALSE.equals(mViewModel.getError().getValue())) {
+                        Snackbar.make(binding.getRoot(), "Data Berhasil Disimpan", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                }
+            }
+        });
 
 
         return binding.getRoot();
